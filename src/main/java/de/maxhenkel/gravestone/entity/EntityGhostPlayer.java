@@ -89,6 +89,7 @@ public class EntityGhostPlayer extends EntityMob {
         return true;
     }
 
+    @Override
     public EnumCreatureAttribute getCreatureAttribute() {
         return EnumCreatureAttribute.UNDEAD;
     }
@@ -112,10 +113,9 @@ public class EntityGhostPlayer extends EntityMob {
     }
 
     @Override
-    public void setCustomNameTag(String name) {
-        super.setCustomNameTag(name);
-
-        if (name.equals("henkelmax")) {
+    public void setCustomNameTag(@Nullable String name) {
+        if (name != null && name.equals("henkelmax")) {
+            super.setCustomNameTag(name);
             setOverpowered();
         }
     }

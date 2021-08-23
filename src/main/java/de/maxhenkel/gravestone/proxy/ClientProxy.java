@@ -12,6 +12,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 public class ClientProxy extends CommonProxy{
  
@@ -33,4 +34,5 @@ public class ClientProxy extends CommonProxy{
 		super.postinit(event);
 	}
 
+	public void serverStarting(FMLServerStartingEvent event) {}
 }

@@ -169,7 +169,7 @@ public class BlockGraveStone extends BlockContainer {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-                                    EnumHand hand, EnumFacing heldItem, float side, float hitX, float hitY) {
+                                    EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (worldIn.isRemote) {
             return true;
         }
@@ -177,7 +177,7 @@ public class BlockGraveStone extends BlockContainer {
         TileEntity tileentity = worldIn.getTileEntity(pos);
 
         if (!(tileentity instanceof TileEntityGraveStone)) {
-            return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY);
+            return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
         }
 
         TileEntityGraveStone grave = (TileEntityGraveStone) tileentity;

@@ -48,7 +48,7 @@ public class TileEntityGraveStone extends TileEntity implements IInventory {
 		NBTTagList list = new NBTTagList();
 
 		for (int i = 0; i < inventory.getSizeInventory(); i++) {
-			if (inventory.getStackInSlot(i) != null) {
+			if (inventory.getStackInSlot(i).isEmpty()) {
 				NBTTagCompound tag = new NBTTagCompound();
 				inventory.getStackInSlot(i).writeToNBT(tag);
 				list.appendTag(tag);
@@ -91,7 +91,13 @@ public class TileEntityGraveStone extends TileEntity implements IInventory {
 
 	@Override
 	public NBTTagCompound getUpdateTag() {
-		return this.writeToNBT(new NBTTagCompound());
+
+		NBTTagCompound compound = new NBTTagCompound();
+		compound.setString(PLAYER_NAME, playerName);
+		compound.setLong(DEATH_TIME, deathTime);
+		compound.setString(PLAYER_UUID, playerUUID);
+		compound.setBoolean(RENDER_HEAD, renderHead);
+		return super.writeToNBT(compound);
 	}
 
 	@Override

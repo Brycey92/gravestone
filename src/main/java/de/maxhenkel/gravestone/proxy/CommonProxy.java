@@ -3,6 +3,7 @@ package de.maxhenkel.gravestone.proxy;
 import de.maxhenkel.gravestone.Config;
 import de.maxhenkel.gravestone.Log;
 import de.maxhenkel.gravestone.Main;
+import de.maxhenkel.gravestone.commands.RestoreCommand;
 import de.maxhenkel.gravestone.entity.EntityGhostPlayer;
 import de.maxhenkel.gravestone.events.BlockEvents;
 import de.maxhenkel.gravestone.events.DeathEvents;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
@@ -46,4 +48,7 @@ public class CommonProxy {
 
 	}
 
+	public void serverStarting(FMLServerStartingEvent event) {
+		event.registerServerCommand(new RestoreCommand());
+	}
 }

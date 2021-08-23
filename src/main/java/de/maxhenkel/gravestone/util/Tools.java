@@ -11,6 +11,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class Tools {
 
@@ -90,8 +91,9 @@ public class Tools {
 		try {
 			String[] split = name.split(":");
 			if (split.length == 2) {
-				Block b = Block.REGISTRY.getObject(new ResourceLocation(split[0], split[1]));
-				if (b.equals(Blocks.AIR)) {
+				//Block b = Block.REGISTRY.getObject(new ResourceLocation(split[0], split[1]));
+				Block b = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
+				if (Blocks.AIR.equals(b)) {
 					return null;
 				} else {
 					return b;

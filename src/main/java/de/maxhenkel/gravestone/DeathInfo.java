@@ -122,11 +122,11 @@ public class DeathInfo {
 	}
 
 	public static DeathInfo getDeathInfoFromPlayerHand(EntityPlayer player) {
-		ItemStack stack = null;
+		ItemStack stack = ItemStack.EMPTY;
 
-		if (player.getHeldItemMainhand() != null && isDeathInfoItem(player.getHeldItemMainhand().getItem())) {
+		if (isDeathInfoItem(player.getHeldItemMainhand().getItem())) {
 			stack = player.getHeldItemMainhand();
-		} else if (player.getHeldItemOffhand() != null && isDeathInfoItem(player.getHeldItemOffhand().getItem())) {
+		} else if (isDeathInfoItem(player.getHeldItemOffhand().getItem())) {
 			stack = player.getHeldItemOffhand();
 		} else {
 			return null;
@@ -138,15 +138,11 @@ public class DeathInfo {
 
 		NBTTagCompound compound = stack.getTagCompound();
 
-		if (!compound.hasKey(KEY_INFO)) {
+		if (compound == null || !compound.hasKey(KEY_INFO)) {
 			return null;
 		}
 
 		NBTTagCompound info = compound.getCompoundTag(KEY_INFO);
-
-		if (info == null) {
-			return null;
-		}
 
 		return fromNBT(info);
 	}

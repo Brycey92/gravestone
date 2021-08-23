@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = Main.MODID, version = Main.VERSION, acceptedMinecraftVersions=Main.MC_VERSION, updateJSON=Main.UPDATE_JSON)
 public class Main{
@@ -40,6 +41,11 @@ public class Main{
     @EventHandler
     public void postinit(FMLPostInitializationEvent event){
 		proxy.postinit(event);
+    }
+
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event){
+        proxy.serverStarting(event);
     }
     
 	public static Main instance() {

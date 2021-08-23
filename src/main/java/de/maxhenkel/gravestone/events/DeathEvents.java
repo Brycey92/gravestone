@@ -63,6 +63,10 @@ public class DeathEvents {
 			return;
 		}
 
+		if (!Config.giveDeathNotes) {
+			return;
+		}
+
 		if (!(event.getEntity() instanceof EntityLivingBase)) {
 			return;
 		}

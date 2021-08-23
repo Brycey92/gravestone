@@ -39,10 +39,8 @@ public class Page {
 		
 		int y = 60;
 		final int space = 12;
-		
-		for (int i = 0; i < items.length; i++) {
-			ItemInfo s = items[i];
-			
+
+		for (ItemInfo s : items) {
 			if (s == null) {
 				continue;
 			}
@@ -53,7 +51,7 @@ public class Page {
 				continue;
 			}
 
-			gui.drawItem(TextFormatting.ITALIC +name, y);
+			gui.drawItem(TextFormatting.ITALIC + name, y);
 			gui.drawItemSize(String.valueOf(s.getStackSize()), y);
 
 			y = y + space;

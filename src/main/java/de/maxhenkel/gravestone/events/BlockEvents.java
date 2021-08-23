@@ -47,6 +47,12 @@ public class BlockEvents {
 			return;
 		}
 
+		if (!(event.getEntity() instanceof EntityPlayer)) {
+			return;
+		}
+
+		EntityPlayer player = (EntityPlayer) event.getEntity();
+
 		TileEntity te = event.getWorld().getTileEntity(event.getPos());
 
 		if (!(te instanceof TileEntityGraveStone)) {
@@ -55,10 +61,13 @@ public class BlockEvents {
 
 		TileEntityGraveStone graveTileEntity = (TileEntityGraveStone) te;
 
-		ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
+		ItemStack stack = player.getHeldItem(event.getHand());
 
-		if (stack == null || !stack.getItem().equals(Item.getItemFromBlock(ModBlocks.GRAVESTONE))) {
-			return;
+		if (stack.isEmpty() || !stack.getItem().equals(Item.getItemFromBlock(ModBlocks.GRAVESTONE))) {
+			stack = player.getHeldItemOffhand();
+			if (stack.isEmpty() || !stack.getItem().equals(Item.getItemFromBlock(ModBlocks.GRAVESTONE))) {
+				return;
+			}
 		}
 
 		if (!stack.hasDisplayName()) {

@@ -2,10 +2,11 @@ package de.maxhenkel.gravestone;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import de.maxhenkel.gravestone.DeathInfo.ItemInfo;
 import de.maxhenkel.gravestone.blocks.BlockGraveStone;
 import de.maxhenkel.gravestone.tileentity.TileEntityGraveStone;
-import de.maxhenkel.gravestone.util.NoSpaceException;
 import de.maxhenkel.gravestone.util.Tools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,6 +18,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 public class GraveProcessor {
 
@@ -67,27 +70,22 @@ public class GraveProcessor {
 	}
 
 	public boolean placeGraveStone(List<EntityItem> drops) {
-		for(EntityItem ei:drops){
-			this.drops.add(ei.getItem());
-		}
-		
-		try {
+		this.drops = drops.stream().map(EntityItem::getItem).collect(Collectors.toList());
+
 			this.gravePosition = getGraveStoneLocation();
-		} catch (NoSpaceException e) {
-			this.gravePosition=deathPosition;
-			Log.i("Grave from '" +entity.getName() +"' cant be created (No space)");
-			return false;
-		}
+			if(this.gravePosition == null) {
+				this.gravePosition = deathPosition;
+			}
 
 		try {
 			world.setBlockState(gravePosition, ModBlocks.GRAVESTONE.getDefaultState().withProperty(BlockGraveStone.FACING,
 					entity.getHorizontalFacing().getOpposite()));
-			
+
 			if(isReplaceable(gravePosition.down())){
 				world.setBlockState(gravePosition.down(), Blocks.DIRT.getDefaultState());
 			}
-			
-			
+
+
 		} catch (Exception e) {
 			return false;
 		}
@@ -104,11 +102,11 @@ public class GraveProcessor {
 			graveTileEntity.setPlayerName(entity.getName());
 			graveTileEntity.setPlayerUUID(entity.getUniqueID().toString());
 			graveTileEntity.setDeathTime(time);
-			
+
 			graveTileEntity.setRenderHead(entity instanceof EntityPlayer);
 
 			addItems(graveTileEntity, drops);
-			
+
 		} catch (Exception e) {
 			Log.w("Failed to fill gravestone with data");
 		}
@@ -127,7 +125,7 @@ public class GraveProcessor {
 					}else{
 						InventoryHelper.spawnItemStack(world, graveStone.getPos().getX(), graveStone.getPos().getY(), graveStone.getPos().getZ(), stack);
 					}
-					
+
 				} catch (Exception e) {
 					Log.w("Failed to add Item '" +item.getItem().getUnlocalizedName() +"' to gravestone");
 				}
@@ -137,9 +135,10 @@ public class GraveProcessor {
 		}
 	}
 
-	public BlockPos getGraveStoneLocation() throws NoSpaceException {
+	@Nullable
+	public BlockPos getGraveStoneLocation() {
 		BlockPos location = new BlockPos(deathPosition.getX(), deathPosition.getY(), deathPosition.getZ());
-		
+
 		if (world.isOutsideBuildHeight(location) && location.getY()<world.getHeight()) {
 			location = new BlockPos(location.getX(), 1, location.getZ());
 		}
@@ -151,44 +150,47 @@ public class GraveProcessor {
 
 			location = location.add(0, 1, 0);
 		}
-		
-		throw new NoSpaceException("No free Block above death Location");
+
+		return null;
 	}
 
 	private boolean isReplaceable(BlockPos pos) {
 		Block b = world.getBlockState(pos).getBlock();
 
-		if (b.getUnlocalizedName().equals(Blocks.AIR.getUnlocalizedName())) {
+		if (b.equals(Blocks.AIR)) {
 			return true;
 		}
 
 		for (Block replaceableBlock : replaceableBlocks) {
-			if (b.getUnlocalizedName().equals(replaceableBlock.getUnlocalizedName())) {
+			if (b.equals(replaceableBlock)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	public void givePlayerNote(){
-		
+
 		if(!(entity instanceof EntityPlayer)){
 			return;
 		}
-		
+
 		EntityPlayer player=(EntityPlayer) entity;
-		
-		ItemInfo[] items=new ItemInfo[drops.size()];
+
+		ItemInfo[] items = new ItemInfo[drops.size()];
 		for(int i=0; i<drops.size(); i++){
-			ItemStack stack=drops.get(i);
-			if(stack!=null){
-				items[i]=new ItemInfo(Tools.getStringFromItem(stack.getItem()), stack.getCount(), stack.getMetadata());
+			ItemStack itemStack = drops.get(i);
+			if (itemStack.getItem().equals(ModItems.DEATH_INFO)) {
+				ItemStack stack = itemStack.copy();
+				stack.setTagCompound(null);
+				items[i] = new ItemInfo(Tools.getStringFromItem(stack.getItem()), stack.getCount(), stack.getMetadata());
 			}
+			items[i] = new ItemInfo(Tools.getStringFromItem(itemStack.getItem()), itemStack.getCount(), itemStack.getMetadata());
 		}
-		
-		DeathInfo info=new DeathInfo(gravePosition, player.dimension, items, player.getName(), time, player.getUniqueID());
+
+		DeathInfo info = new DeathInfo(gravePosition,player.dimension, items, player.getName(), time, player.getUniqueID());
 		ItemStack stack=new ItemStack(ModItems.DEATH_INFO);
-		
+
 		info.addToItemStack(stack);
 		player.inventory.addItemStackToInventory(stack);
 	}
